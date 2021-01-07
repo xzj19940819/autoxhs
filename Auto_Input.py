@@ -45,9 +45,9 @@ def ocr_text():
 '''
 
 # 配置百度AipOcr
-APP_ID = '11637513'
-API_KEY = 'gL1FSye2D8QlcBrz2q7TQZYh'
-SECRET_KEY = '2cfn2mGZWGws0mhlxmINRBprr2A9qekf'
+APP_ID = '26488994'
+API_KEY = 'wjlqvbT4ldUqQAR3e45OoGvG'
+SECRET_KEY = 'S6nE3oGzN45Emx92tXa6O84VAKgBxjaI'
 
 client = AipOcr(APP_ID, API_KEY, SECRET_KEY)
 
