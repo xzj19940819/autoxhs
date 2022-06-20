@@ -7,7 +7,7 @@ import requests
 import base64
 import time
 import re
-
+import random
 
 # 保证兼容python2以及python3
 IS_PY3 = sys.version_info.major == 3
@@ -97,10 +97,15 @@ def vimmy_getphonesreen():
     os.system('adb shell screencap -p /sdcard/autolottery.png')
     os.system('adb pull /sdcard/autolottery.png ./img')
 
-def vimmy_getbaiduimgtext():
+def vimmy_getphonesreen_create():
+    os.system('adb shell screencap -p /sdcard/vimmycreate.png')
+    os.system('adb pull /sdcard/vimmycreate.png ./img')
+
+def vimmy_getbaiduimgtext(img_filepath):
     request_url = "https://aip.baidubce.com/rest/2.0/ocr/v1/general"
     # 二进制方式打开图片文件
-    f = open('img/autolottery.png', 'rb')
+    #f = open(img/autolottery.png, 'rb')
+    f = open(img_filepath, 'rb')
     img = base64.b64encode(f.read())
 
     params = {"image":img}
@@ -111,14 +116,24 @@ def vimmy_getbaiduimgtext():
     response = requests.post(request_url, data=params, headers=headers)
     if response:
         print (response.json())
+    return json.dumps(response.json(),ensure_ascii=False)
 
 def adb_click(randomX,randomY):
     cmd = 'adb shell input tap ' + str(randomX) + ' ' + str(randomY)
     os.popen(cmd)
     print('input(%d,%d)',randomX, randomY)
 
+def adb_slide_left():
+    cmd = 'adb shell input swipe 450 1300 356 1300'
+    os.popen(cmd)
+
+def adb_go_home():
+    cmd = 'adb shell input keyevent 3'
+    os.popen(cmd)
+
+
 def adb_inputtext(phonenum):
-    cmd = 'adb shell input text ' + phonenum
+    cmd = "adb shell input text " + phonenum
     os.popen(cmd)
     print('input',phonenum)
 
@@ -255,27 +270,164 @@ def vimmy_getremotephonenum_getfinalcode():
     else:
         print('登录短信平台失败\n')
 
+def vimmy_createcount():
+    print('VIMIY自动化脚本：创造账户\n')
+    adb_click(800,600)
+    time.sleep(1)
+    adb_click(1000,1100)
+    time.sleep(1)
+    adb_click(600,1700)
+    time.sleep(1)
+    adb_click(900,1000)
+    time.sleep(1)
+    adb_click(700,1300)
+    time.sleep(1)
+    print('VIMIY自动化脚本：兴趣\n')
+    adb_click(200,600)
+    time.sleep(1)
+    adb_click(200,1000)
+    time.sleep(1)
+    adb_click(600,1000)
+    time.sleep(1)
+    adb_click(600,600)
+    time.sleep(1)
+    adb_click(600,2100)
+    time.sleep(1)
+    print('VIMIY自动化脚本：称呼\n')
+    adb_click(600,900)
+    time.sleep(1)
+    adb_inputtext(str(random.randint(0,9999999)))
+    time.sleep(1)
+    adb_click(600,1300)
+    time.sleep(1)
 
-print('VIMIY自动化脚本：登录短信平台，获取手机号\n')
-vimmy_token = vimmy_getremotephonenum_login()
-#vimmy_token = 'b3c63bc0d43342d9a3321275310b4564'
-if(vimmy_token.find("null") == -1):
-    vimmy_getremotephonenum_getmoney(vimmy_token)
-    vimmy_phonenum = vimmy_getremotephonenum_getphoenum(vimmy_token)
-    G_PHONENUM = vimmy_phonenum
-    time.sleep(30)
-print('VIMIY自动化脚本：打开小红书\n')
-adb_click(916,1090)
-time.sleep(10)
-print('VIMIY自动化脚本：打开手机登录页面\n')
-adb_click(487,1664)
-time.sleep(5)
-print('VIMIY自动化脚本：清空手机号码\n')
-adb_click(876,630)
-time.sleep(5)
-print('VIMIY自动化脚本：输入手机号码\n')
-adb_inputtext(G_PHONENUM)
-time.sleep(5)
+def vimmy_huawei_test():
+    print('VIMIY自动化脚本：登录短信平台，获取手机号\n')
+    vimmy_token = vimmy_getremotephonenum_login()
+    #vimmy_token = 'b3c63bc0d43342d9a3321275310b4564'
+    if(vimmy_token.find("null") == -1):
+        vimmy_getremotephonenum_getmoney(vimmy_token)
+        vimmy_phonenum = vimmy_getremotephonenum_getphoenum(vimmy_token)
+        G_PHONENUM = vimmy_phonenum
+        time.sleep(1)
+    else:
+        print('获取手机号失败\n')
+        sys.exit()
+    print('VIMIY自动化脚本：打开小红书\n')
+    #adb_click(916,1090) -旧安卓
+    #华为
+    adb_click(1000,600)
+    time.sleep(10)
+    print('VIMIY自动化脚本：打开手机登录页面\n')
+    #旧安卓adb_click(487,1664)
+    #华为
+    adb_click(700,1950)
+    time.sleep(1)
+    adb_click(100,2300)
+    time.sleep(1)
+    adb_click(600,2100)
+    time.sleep(1)
+    print('VIMIY自动化脚本：清空手机号码\n')
+    #旧安卓adb_click(876,630)
+    #旧安卓time.sleep(5)
+    adb_click(1000,500)
+    time.sleep(1)
+    print('VIMIY自动化脚本：输入手机号码\n')
+    adb_click(350,500)
+    time.sleep(1)
+    adb_inputtext(G_PHONENUM)
+    time.sleep(5)
+    #华为
+    adb_click(178,900)
+    time.sleep(1)
+    adb_click(178,800)
+    time.sleep(1)
+
+    time.sleep(10)
+    print('VIMIY自动化脚本：获取验证码\n')
+    vimmy_phonetext = vimmy_getremotephonenum_getphoetext(vimmy_token,vimmy_phonenum)
+    if(vimmy_phonetext.find("尚未收到") != -1):
+            print('获取短信失败\n')
+            vimmy_phonetext = vimmy_getremotephonenum_getphoetext(vimmy_token,vimmy_phonenum)
+            if(vimmy_phonetext.find("尚未收到") != -1):
+                print('二次获取短信失败\n')
+                sys.exit()
+            else:
+                print('VIMIY自动化脚本：短信原文是：\n')
+                print(vimmy_phonetext)
+                print('VIMIY自动化脚本：最终的验证码是：\n')
+                tmp_handle_str = (vimmy_phonetext[13:])
+                ret = re.search("[0-9]{6}",tmp_handle_str)
+                tmp_final = ret.group()
+                print(tmp_final)
+                G_PHONETEXT = tmp_final
+    else:
+            print('VIMIY自动化脚本：短信原文是：\n')
+            print(vimmy_phonetext)
+            print('VIMIY自动化脚本：最终的验证码是：\n')
+            tmp_handle_str = (vimmy_phonetext[13:])
+            ret = re.search("[0-9]{6}",tmp_handle_str)
+            tmp_final = ret.group()
+            print(tmp_final)
+            G_PHONETEXT = tmp_final
+
+    print('VIMIY自动化脚本：输入验证码\n')
+    adb_inputtext(G_PHONETEXT)
+    time.sleep(5)
+
+    vimmy_getphonesreen_create()
+    time.sleep(3)
+    checkcreateresul=vimmy_getbaiduimgtext("img/vimmycreate.png")
+    time.sleep(5)
+    print(checkcreateresul)
+    if(checkcreateresul.find("欢迎来到") != -1):
+        print('处理第一次创建用户\n')
+        vimmy_createcount()
+    else:
+        print('正常流程\n')
+
+    print('VIMIY自动化脚本：搜索\n')
+    adb_click(1100,200)
+    time.sleep(1)
+#关键词修改这里
+    adb_inputtext('vimmy')
+    time.sleep(1)
+    adb_click(1100,200)
+    time.sleep(1)
+    adb_click(300,900)
+    time.sleep(1)
+    print('VIMIY自动化脚本：点赞\n')
+    adb_slide_left()
+    time.sleep(1)
+    adb_click(600,2300)
+    time.sleep(1)
+    adb_click(900,200)
+    time.sleep(1)
+    adb_click(800,2300)
+    time.sleep(1)
+    print('VIMIY自动化脚本：退出\n')
+    adb_click(60,200)
+    time.sleep(1)
+    adb_click(60,200)
+    time.sleep(1)
+    adb_click(60,200)
+    time.sleep(1)
+    print('VIMIY自动化脚本：注销\n')
+    adb_click(1100,2300)
+    time.sleep(1)
+    adb_click(1100,800)
+    time.sleep(1)
+    adb_click(600,2300)
+    time.sleep(1)
+    adb_click(900,1400)
+    time.sleep(1)
+    adb_go_home()
+
+
+#这里输入你需要循环的次数
+for i in range(5):
+    vimmy_huawei_test()
+    time.sleep(5)
 
 # vimmy_getbaiduimgtext()
 # b3c63bc0d43342d9a3321275310b4564
